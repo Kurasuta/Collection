@@ -97,7 +97,7 @@ for root, dir, files in os.walk(os.path.join(args.git, 'malwares', 'Binaries')):
     try:
         z = zipfile.ZipFile(zip_data)
     except zipfile.BadZipFile as e:
-        logger.warning('BadZipFile in "%s" with password "%s": %s' % (root, password, e))
+        logger.warning('BadZipFile in "%s" with password "%s": %s' % (root, password.decode('utf-8'), e))
 
     try:
         samples = [Sample(z.read(name, pwd=password), [os.path.basename(root)], [name]) for name in z.namelist()]
@@ -107,4 +107,4 @@ for root, dir, files in os.walk(os.path.join(args.git, 'malwares', 'Binaries')):
             dumper.dump(sample)
         dumper.mark_dumped(actual_sha256)
     except RuntimeError as e:
-        logger.warning('Exception during extraction in "%s" with password "%s": %s' % (root, password, e))
+        logger.warning('RuntimeError in "%s" with password "%s": %s' % (root, password.decode('utf-8'), e))
