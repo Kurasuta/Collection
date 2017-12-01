@@ -98,13 +98,17 @@ for root, dir, files in os.walk(os.path.join(args.git, 'malwares', 'Binaries')):
         z = zipfile.ZipFile(zip_data)
     except zipfile.BadZipFile as e:
         logger.warning('BadZipFile in "%s" with password "%s": %s' % (root, password.decode('utf-8'), e))
+        continue
 
     try:
         samples = [Sample(z.read(name, pwd=password), [os.path.basename(root)], [name]) for name in z.namelist()]
-        logger.debug('Dumping %i samples' % len(samples))
-        for sample in samples:
-            logger.debug('Dumping sample with hash "%s"' % sample.sha256)
-            dumper.dump(sample)
-        dumper.mark_dumped(actual_sha256)
     except RuntimeError as e:
         logger.warning('RuntimeError in "%s" with password "%s": %s' % (root, password.decode('utf-8'), e))
+        continue
+
+    logger.debug('Dumping %i samples' % len(samples))
+    for sample in samples:
+        logger.debug('Dumping sample with hash "%s"' % sample.sha256)
+        dumper.dump(sample)
+    dumper.mark_dumped(actual_sha256)
+
