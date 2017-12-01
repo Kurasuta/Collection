@@ -94,7 +94,10 @@ for root, dir, files in os.walk(os.path.join(args.git, 'malwares', 'Binaries')):
     logger.debug('Unpacking in "%s"' % root)
     zip_data = io.BytesIO()
     zip_data.write(zip_content)
-    z = zipfile.ZipFile(zip_data)
+    try:
+        z = zipfile.ZipFile(zip_data)
+    except zipfile.BadZipFile as e:
+        logger.warning('BadZipFile in "%s" with password "%s": %s' % (root, password, e))
 
     try:
         samples = [Sample(z.read(name, pwd=password), [os.path.basename(root)], [name]) for name in z.namelist()]
