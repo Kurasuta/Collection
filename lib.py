@@ -65,6 +65,15 @@ class Sample(object):
 class SampleDumper(object):
     def __init__(self, target_directory):
         self.target_directory = target_directory  # type: str
+        self.dumped_file = os.path.join(target_directory, 'dumped.txt')  # type: str
+
+    def is_dumped(self, sha256):
+        return sha256 in open(self.dumped_file, 'r').read().split('\n') if os.path.exists(self.dumped_file) else False
+
+    def mark_dumped(self, sha256):
+        with open(self.dumped_file, 'a') as fp:
+            fp.write('%s\n' % sha256)
+            fp.close()
 
     def dump(self, sample):
         target_path = os.path.join(self.target_directory, sample.sha256)

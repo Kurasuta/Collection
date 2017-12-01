@@ -89,6 +89,8 @@ for root, dir, files in os.walk(os.path.join(args.git, 'malwares', 'Binaries')):
         if check_md5 != actual_md5:
             logger.warning('md5 mismatch in "%s": "%s" != "%s"' % (root, actual_md5, check_md5))
 
+    if dumper.is_dumped(actual_sha256):
+        continue
     logger.debug('Unpacking in "%s"' % root)
     zip_data = io.BytesIO()
     zip_data.write(zip_content)
@@ -100,5 +102,6 @@ for root, dir, files in os.walk(os.path.join(args.git, 'malwares', 'Binaries')):
         for sample in samples:
             logger.debug('Dumping sample with hash "%s"' % sample.sha256)
             dumper.dump(sample)
+        dumper.mark_dumped(actual_sha256)
     except RuntimeError as e:
         logger.warning('Exception during extraction in "%s" with password "%s": %s' % (root, password, e))
