@@ -6,9 +6,9 @@ import json
 import argparse
 
 parser = argparse.ArgumentParser(description='Download samples from das-malwerk')
+parser.add_argument('state_file', help='file that records the files already downloaded')
 parser.add_argument('target', help='directory for result')
 args = parser.parse_args()
-
 
 def daterange(start_date, end_date):
     if start_date <= end_date:
@@ -19,8 +19,7 @@ def daterange(start_date, end_date):
             yield start_date - datetime.timedelta(n)
 
 
-zips = sorted([fn for fn in os.listdir(args.target) if fn.endswith('.zip')], reverse=True)
-start_date_string = zips[0][:10] if zips else '2016-10-23'
+start_date_string = open(args.state_file, 'rb').read().strip()
 start_date = datetime.datetime(int(start_date_string[:4]), int(start_date_string[5:7]), int(start_date_string[8:]) + 1)
 for current_date in daterange(start_date, datetime.datetime.now()):
     current_date_string = current_date.strftime('%Y-%m-%d')
