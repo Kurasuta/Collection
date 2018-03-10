@@ -74,8 +74,8 @@ for root, dir, files in os.walk(os.path.join(args.git, 'malwares', 'Binaries')):
     if check_sha256 is None and check_md5 is None and check_sha1 is None:
         logger.warning('No checksum available in "%s"' % root)
 
+    actual_sha256 = hashlib.sha256(zip_content).hexdigest().lower()
     if check_sha256 is not None:
-        actual_sha256 = hashlib.sha256(zip_content).hexdigest().lower()
         if check_sha256 != actual_sha256:
             logger.warning('sha256 mismatch in "%s": "%s" != "%s"' % (root, actual_sha256, check_sha256))
 
